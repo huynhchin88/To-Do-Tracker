@@ -1,0 +1,32 @@
+const express = require('express');
+const router = express.Router();
+const Todo = require('../models/Todo');
+
+// get all
+router.get('/', async (req, res) => {
+    const todos = await Todo.find();
+    res.json(todos);
+});
+
+// add
+router.post('/', async (req, res) => {
+    const newTodo = new Todo({text: req.body.text});
+    const saved = await newTodo.save();
+    res.json(saved);
+});
+
+// toggle complete
+router.put('/:id', async (req, res) => {
+    const todo = await Todo.findById(req.params.id);
+    todo.blnCompleted = !todo.blnCompleted;
+    const updated = await todo.save();
+    res.json(updated)
+});
+
+// delete
+router.delete('/:id', async (req, res) => {
+    await Todo.findByIdAndDelete(req.params.id);
+    res.json({message: 'To-Do Deleted.'});
+});
+
+module.exports = router;
